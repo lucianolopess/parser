@@ -1,5 +1,5 @@
 /*
- * @(#)SlashState.java	 1.0.0
+ * @(#)SlashStarState.java	 1.0.0
  *
  * Copyright (c) 1999 Steven J. Metsker
  *
@@ -23,32 +23,26 @@ package sjm.parse.tokens;
 
 import java.io.*;
 
-public class SlashState extends TokenizerState {
-
-	protected SlashStarState slashStarState = new SlashStarState();
-
-	protected SlashSlashState slashSlashState = new SlashSlashState();
-
+public class SlashStarState extends TokenizerState {
+	
 	/**
-	 * Either delegate to a comment-handling state, or return a token with just
-	 * a slash in it.
+	 * Ignore everything up to a closing star and slash, and then return the
+	 * tokenizer's next token.
 	 * 
-	 * @return either just a slash token, or the results of delegating to a
-	 *         comment-handling state
+	 * @return the tokenizer's next token
 	 */
-	public Token nextToken(PushbackReader r, int theSlash, Tokenizer t)
+	public Token nextToken(PushbackReader r, int theStar, Tokenizer t)
 			throws IOException {
 
-		int c = r.read();
-		if (c == '*') {
-			return slashStarState.nextToken(r, '*', t);
+		int c = 0;
+		int lastc = 0;
+		while (c >= 0) {
+			if ((lastc == '*') && (c == '/')) {
+				break;
+			}
+			lastc = c;
+			c = r.read();
 		}
-		if (c == '/') {
-			return slashSlashState.nextToken(r, '/', t);
-		}
-		if (c >= 0) {
-			r.unread(c);
-		}
-		return new Token(Token.TT_SYMBOL, "/", 0);
+		return t.nextToken();
 	}
 }

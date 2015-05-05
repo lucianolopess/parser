@@ -17,6 +17,7 @@ import sjm.parse.tokens.Tokenizer;
 public class TestCoffeeParser {
 
 	private String coffeelinha = "Brimful, Regular, Kenya, 6.95";
+	private String coffeelinhaespacos = "Fragrant Delicto, Regular/French, Peru, 9.95";
 	
 	@Test
 	public void testTokenizer() {
@@ -27,6 +28,26 @@ public class TestCoffeeParser {
 	@Test
 	public void testGetTarget() throws IOException {
 		Reader reader = new StringReader(coffeelinha);
+		BufferedReader r = new BufferedReader(reader);
+
+		Tokenizer t = CoffeeParser.tokenizer();
+		Parser p = CoffeeParser.start();
+		while (true) {
+			String s = r.readLine();
+			if (s == null) {
+				break;
+			}
+			t.setString(s);
+			Assembly in = new TokenAssembly(t);
+			Assembly out = p.bestMatch(in);
+			Coffee coffee = (Coffee) out.getTarget();
+			assertNotNull(coffee);
+		}
+	}
+	
+	@Test
+	public void testGetTargetNameWithSpaces() throws IOException {
+		Reader reader = new StringReader(coffeelinhaespacos);
 		BufferedReader r = new BufferedReader(reader);
 
 		Tokenizer t = CoffeeParser.tokenizer();
