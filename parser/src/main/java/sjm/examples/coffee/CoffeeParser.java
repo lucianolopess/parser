@@ -129,7 +129,7 @@ public class CoffeeParser {
 		return new Num().setAssembler(new PriceAssembler());
 	}
 	
-	/*
+	/**
 	 * Return a parser that will recognize the grammar:
 	 * 
 	 *     roast = Word (orFrench | Empty);
